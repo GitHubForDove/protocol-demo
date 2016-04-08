@@ -30,8 +30,8 @@ public class ClientMain {
 //            client.syncSend(request);
 //        }
 
-        ExecutorService pool = Executors.newFixedThreadPool(5);
-        int batch = 100;
+        ExecutorService pool = Executors.newFixedThreadPool(50);
+        int batch = 1000;
         List<Callable<Object>> callables = new ArrayList<Callable<Object>>(batch);
         for(int i=0;i<batch;i++){
             final int idx = i;

@@ -11,6 +11,7 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -47,6 +48,7 @@ public class NettyClient implements IClient {
                     protected void initChannel(SocketChannel ch) throws Exception {
                         ch.pipeline()
                                 //处理分包传输问题
+                                .addLast("decoder", new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, 0, 4))
                                 .addLast("encoder", new LengthFieldPrepender(4, false))
                                 .addLast(new RpcDecoder(RpcResponse.class))
                                 .addLast(new RpcEncoder(RpcRequest.class))
