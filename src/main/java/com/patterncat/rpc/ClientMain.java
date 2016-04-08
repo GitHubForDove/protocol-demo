@@ -31,7 +31,7 @@ public class ClientMain {
 //        }
 
         ExecutorService pool = Executors.newFixedThreadPool(5);
-        int batch = 10;
+        int batch = 100;
         List<Callable<Object>> callables = new ArrayList<Callable<Object>>(batch);
         for(int i=0;i<batch;i++){
             final int idx = i;

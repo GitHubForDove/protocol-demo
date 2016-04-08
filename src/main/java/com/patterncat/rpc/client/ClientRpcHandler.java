@@ -28,6 +28,11 @@ public class ClientRpcHandler extends SimpleChannelInboundHandler<RpcResponse> {
     protected void channelRead0(ChannelHandlerContext ctx, RpcResponse rpcResponse) throws Exception {
         System.out.println("receive response:"+rpcResponse);
         BlockingQueue<RpcResponse> queue = responseMap.get(rpcResponse.getTraceId());
+        //高并发下可能为null
+        if(queue == null){
+            queue = new LinkedBlockingQueue<RpcResponse>(1);
+            responseMap.putIfAbsent(rpcResponse.getTraceId(),queue);
+        }
         queue.add(rpcResponse);
     }
 
