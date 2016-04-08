@@ -40,7 +40,7 @@ public class ClientMain {
                     RpcRequest request = new RpcRequest();
                     request.setTraceId(UUID.randomUUID().toString());
                     request.setAppName("client" + idx);
-                    request.setClassName("com.patterncat.service.HelloService");
+                    request.setClassName("com.patterncat.rpc.service.HelloService");
                     request.setMethodName("say");
                     request.setParameters(new Object[]{"from client " + idx});
                     request.setParameterTypes(new Class[]{String.class});
