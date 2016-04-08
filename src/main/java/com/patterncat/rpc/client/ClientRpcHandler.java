@@ -1,6 +1,5 @@
 package com.patterncat.rpc.client;
 
-import com.google.common.base.Optional;
 import com.patterncat.rpc.dto.RpcRequest;
 import com.patterncat.rpc.dto.RpcResponse;
 import io.netty.channel.ChannelHandler;
@@ -42,15 +41,15 @@ public class ClientRpcHandler extends SimpleChannelInboundHandler<RpcResponse> {
         cause.printStackTrace();
     }
 
-    public RpcResponse send(RpcRequest request,Optional<Pair<Long,TimeUnit>> timeout) throws InterruptedException {
+    public RpcResponse send(RpcRequest request,Pair<Long,TimeUnit> timeout) throws InterruptedException {
         responseMap.putIfAbsent(request.getTraceId(), new LinkedBlockingQueue<RpcResponse>(1));
         RpcResponse response = null;
         try {
             BlockingQueue<RpcResponse> queue = responseMap.get(request.getTraceId());
-            if(timeout == null || !timeout.isPresent()){
+            if(timeout == null){
                 response = queue.take();
             }else{
-                response = queue.poll(timeout.get().getKey(),timeout.get().getValue());
+                response = queue.poll(timeout.getKey(),timeout.getValue());
             }
         } finally {
             responseMap.remove(request.getTraceId());

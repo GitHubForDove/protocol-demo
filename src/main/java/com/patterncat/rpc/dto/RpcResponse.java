@@ -45,6 +45,10 @@ public class RpcResponse {
         this.result = result;
     }
 
+    public boolean isError() {
+        return error != null;
+    }
+
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);

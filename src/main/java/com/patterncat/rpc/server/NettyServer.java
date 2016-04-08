@@ -50,7 +50,7 @@ public class NettyServer {
         bossGroup = new NioEventLoopGroup();
         workerGroup = new NioEventLoopGroup(this.ioThreadNum);
         final Map<String,Object> demoService = new HashMap<String, Object>();
-        demoService.put("com.patterncat.service.HelloService", new HelloServiceImpl());
+        demoService.put("com.patterncat.rpc.service.HelloService", new HelloServiceImpl());
 
         ServerBootstrap serverBootstrap = new ServerBootstrap();
         serverBootstrap.group(bossGroup, workerGroup)

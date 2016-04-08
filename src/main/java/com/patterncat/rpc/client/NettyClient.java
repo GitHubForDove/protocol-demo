@@ -6,6 +6,7 @@ import com.patterncat.rpc.codec.RpcEncoder;
 import com.patterncat.rpc.dto.RpcRequest;
 import com.patterncat.rpc.dto.RpcResponse;
 import com.patterncat.rpc.exception.ClientCloseException;
+import com.patterncat.rpc.proxy.RemoteServiceProxy;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -15,6 +16,7 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.lang.reflect.Proxy;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.concurrent.TimeUnit;
@@ -28,7 +30,7 @@ public class NettyClient implements IClient {
 
     private ClientRpcHandler clientRpcHandler;
 
-    private final Optional<Pair<Long,TimeUnit>> NO_TIMEOUT = Optional.<Pair<Long,TimeUnit>>absent();
+
 
     public NettyClient(int workerGroupThreads) {
         this.workerGroupThreads = workerGroupThreads;
@@ -63,12 +65,17 @@ public class NettyClient implements IClient {
     public RpcResponse syncSend(RpcRequest request) throws InterruptedException {
         System.out.println("send request:"+request);
         channel.writeAndFlush(request).sync();
-        return clientRpcHandler.send(request,NO_TIMEOUT);
+        return clientRpcHandler.send(request,null);
     }
 
-    public RpcResponse asyncSend(RpcRequest request,TimeUnit timeUnit,long timeout) throws InterruptedException {
+    public RpcResponse asyncSend(RpcRequest request,Pair<Long,TimeUnit> timeout) throws InterruptedException {
         channel.writeAndFlush(request);
-        return clientRpcHandler.send(request, Optional.of(Pair.of(timeout,timeUnit)));
+        return clientRpcHandler.send(request,timeout);
+    }
+
+    public <T> T rpcProxy(Class<?> interfaceClass,Pair<Long,TimeUnit> timeout){
+        return (T) Proxy.newProxyInstance(interfaceClass.getClassLoader(),
+                new Class<?>[]{interfaceClass},new RemoteServiceProxy(this,timeout));
     }
 
     public InetSocketAddress getRemoteAddress() {
