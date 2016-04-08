@@ -46,7 +46,7 @@ public class NettyClient implements IClient {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
                         ch.pipeline()
-                                //处理分包传输问题
+                                //澶勭悊鍒嗗寘浼犺緭闂
                                 .addLast("encoder", new LengthFieldPrepender(4, false))
                                 .addLast(new RpcDecoder(RpcResponse.class))
                                 .addLast(new RpcEncoder(RpcRequest.class))
